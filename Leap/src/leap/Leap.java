@@ -28,7 +28,7 @@ public class Leap {
 	public static final int SKIP_Y = 678;
 	public static final int SKIP_BACK_X = 629;
 	public static final int SKIP_FORWARD_X = 735;
-	
+
 	public static final int BarY = 699;
 	public static final int BarXStart = 1074;
 	public static final int BarXEnd = 1300;
@@ -79,35 +79,36 @@ public class Leap {
 	}
 	public static final Controller con = new Controller();
 
-	
 	public static void click(double x, double y) {
 		click((int) x, (int) y);
 	}
 	static boolean temp = false;
 // arbitrary "speed" epsilon
-	public static final double E = 70;
-	
-		static AtomicBoolean shouldSkip = new AtomicBoolean(false);
-	public static void createWaitingThread(){
+	public static final double E = 60;
+
+	static AtomicBoolean shouldSkip = new AtomicBoolean(false);
+
+	public static void createWaitingThread() {
 		new Thread(
-			new Runnable(){
-			public void run(){
-				try{
+			new Runnable() {
+			public void run() {
+				try {
 					Thread.sleep(3000);
 					shouldSkip.set(true);
-				}catch(Exception ex){
+				} catch (Exception ex) {
 					//we're using an inner class, good practice? NO!
 				}
-			}	
 			}
+		}
 		).start();
 	}
+
 	public static void main(String[] args) throws Exception {
 
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					Thread.sleep(35 * 1000);
+					Thread.sleep(5 * 60 * 1000);
 				} catch (Exception ex) {
 					//all of this code is exceptionally poor
 				}
@@ -115,7 +116,7 @@ public class Leap {
 				System.exit(0);
 			}
 		}).start();
-	
+
 		createWaitingThread();
 		double pastX = 0;
 		click(SpeakX, SpeakY);
@@ -123,24 +124,37 @@ public class Leap {
 		boolean shouldClick = true;
 		createWaitingThread();
 		for (;;) {
-double newX = con.frame().hands().get(0).palmPosition().getX();
-			if(pastX!=-4200){
-	double dX = newX - pastX;
-	if(Math.abs(dX)>10){
-shouldSkip.set(false);
-createWaitingThread();
-		if(dX>0){
-			click(SKIP_FORWARD_X,SKIP_Y);
-		}else{
-			click(SKIP_BACK_X,SKIP_Y);
-		}
-		Thread.sleep(1000);
-		click(SpeakX,SpeakY);
-		Thread.sleep(1000);
-	}
-}
+			double newX = con.frame().hands().get(0).palmPosition().getX();
+			if (con.frame().hands().get(0).palmPosition().getY() > 1.45 * maxVolHeight) {
+				click(BarXStart + LENGTH / 4.0, BarY);
+				System.exit(0);
+			}
+			double dX = newX - pastX;
+			if (shouldSkip.get()) {
+				if (Math.abs(dX) > E && pastX != 0) {
+					shouldSkip.set(false);
+					createWaitingThread();
+					if (dX > 0) {
+						click(SKIP_FORWARD_X, SKIP_Y);
+						Thread.sleep(1000);
+						click(SpeakX, SpeakY);
+						Thread.sleep(1000);
+					} else {
+						click(SKIP_BACK_X, SKIP_Y);
+						Thread.sleep(250);
+						click(SKIP_BACK_X, SKIP_Y);
+						Thread.sleep(1000);
+						click(SpeakX, SpeakY);
+						Thread.sleep(1000);
+					}
+
+				}
+			}
+
 			pastX = newX;
-			if (mapZero > minVolHeight || con.frame().hands().get(0).fingers().extended().count() != 0)click(BarXStart + (normalize(con.frame().hands().get(0).palmPosition().getY()) - minVolHeight) / (DH / 1.0) * (LENGTH / 1.0), BarY);
+			if (mapZero > minVolHeight || con.frame().hands().get(0).fingers().extended().count() != 0) {
+				click(BarXStart + (normalize(con.frame().hands().get(0).palmPosition().getY()) - minVolHeight) / (DH / 1.0) * (LENGTH / 1.0), BarY);
+			}
 
 		}
 	}

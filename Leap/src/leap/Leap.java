@@ -159,6 +159,7 @@ return 120;
 		createWaitingThread();
 		boolean wereHands = false;
 		for (;;) {
+			if(con.frame().hands().get(0).fingers().extended().count()!=2){
 			boolean nowHands = !con.frame().hands().isEmpty();
 if(lastFrame!=null){
 	if(nowHands&&!wereHands){
@@ -201,5 +202,5 @@ lastFrame = con.frame();
 
 		}
 	}
-
+	}
 }

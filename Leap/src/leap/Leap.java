@@ -162,7 +162,7 @@ return 120;
 			boolean nowHands = !con.frame().hands().isEmpty();
 if(lastFrame!=null){
 	if(nowHands&&!wereHands){
-		System.out.println("test");
+
 		Thread.sleep(1000);
 		click(SpeakX, SpeakY);
 		Thread.sleep(1000);
@@ -170,10 +170,7 @@ if(lastFrame!=null){
 }
 wereHands = nowHands;
 			double newX = con.frame().hands().get(0).palmPosition().getX();
-			if (con.frame().hands().get(0).palmPosition().getY() > 1.45 * maxVolHeight) {
-				click(BarXStart + LENGTH / 4.0, BarY);
-				System.exit(0);
-			}
+
 			double dX = newX - pastX;
 			if (shouldSkip.get()) {
 				if (Math.abs(dX) > E && pastX != 0) {

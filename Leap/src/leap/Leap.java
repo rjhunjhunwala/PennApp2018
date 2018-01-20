@@ -19,6 +19,10 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -103,19 +107,58 @@ public class Leap {
 		).start();
 	}
 
+		public static int getTempo(String song){
+	try{
+	
+		
+		String query = "https://songbpm.com/";
+		String firstPart = "";
+		for(char c: song.toCharArray()){
+			if(Character.isAlphabetic(c)||Character.isDigit(c)){
+				firstPart+=Character.toLowerCase(c);
+			}else if(c==' '||c=='-'||c=='\''||c=='.'){
+				firstPart+='-';
+			}
+		}
+		query+=firstPart;
+	 query+="?q="+song.replaceAll(" ","%20").replaceAll(" ","%27");
+	
+		URL url = new URL(query);
+		InputStream inputStream = null;
+		DataInputStream dataInputStream;
+		
+		inputStream = url.openStream();
+		
+		dataInputStream = new DataInputStream(new BufferedInputStream(inputStream));
+		
+		String s;
+		while((s=dataInputStream.readLine())!=null){
+			//we parse HTML with regex
+		if(s.matches("[ \\t]*<p class=\"title\">[\\d]+</p>")){
+		String out = "";
+			for(char c:s.toCharArray()){
+			if(Character.isDigit(c)){
+				out+=c;
+		}
+			
+		}
+			int ret = Integer.parseInt(out);
+		return ret;
+		
+		}
+	}
+
+}catch(Exception ex){
+	System.out.println(ex);
+	return 120;
+//If something goes horribly wrong, return 120. 
+}
+return 120;	
+}
+	
 	public static void main(String[] args) throws Exception {
 
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					Thread.sleep(5 * 60 * 1000);
-				} catch (Exception ex) {
-					//all of this code is exceptionally poor
-				}
-
-				System.exit(0);
-			}
-		}).start();
+	
 
 		createWaitingThread();
 		double pastX = 0;

@@ -1,14 +1,6 @@
 package leap;
 
-/**
- * ****************************************************************************\
- * Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved. * Leap Motion
- * proprietaray and confidential. Not for distribution. * Use subject to the
- * terms of the Leap Motion SDK Agreement available at *
- * https://developer.leapmotion.com/sdk_agreement, or another agreement *
- * between Leap Motion and you, your company or other organization. *
- * \*****************************************************************************
- */
+
 import java.io.IOException;
 import java.lang.Math;
 import com.leapmotion.leap.*;
@@ -40,7 +32,8 @@ public class Leap {
 
 	public static final int SpeakX = 1211;
 	public static final int SpeakY = 748;
-
+  public static Frame lastFrame = null;
+	
 	public static Robot r = null;
 
 	static {
@@ -162,11 +155,20 @@ return 120;
 
 		createWaitingThread();
 		double pastX = 0;
-		click(SpeakX, SpeakY);
-		Thread.sleep(5000);
-		boolean shouldClick = true;
+
 		createWaitingThread();
+		boolean wereHands = false;
 		for (;;) {
+			boolean nowHands = !con.frame().hands().isEmpty();
+if(lastFrame!=null){
+	if(nowHands&&!wereHands){
+		System.out.println("test");
+		Thread.sleep(1000);
+		click(SpeakX, SpeakY);
+		Thread.sleep(1000);
+	}
+}
+wereHands = nowHands;
 			double newX = con.frame().hands().get(0).palmPosition().getX();
 			if (con.frame().hands().get(0).palmPosition().getY() > 1.45 * maxVolHeight) {
 				click(BarXStart + LENGTH / 4.0, BarY);
@@ -193,9 +195,10 @@ return 120;
 
 				}
 			}
-
+lastFrame = con.frame();
 			pastX = newX;
-			if (mapZero > minVolHeight || con.frame().hands().get(0).fingers().extended().count() != 0) {
+			
+			if (!con.frame().hands().isEmpty()&&(mapZero > minVolHeight || con.frame().hands().get(0).fingers().extended().count() != 0)) {
 				click(BarXStart + (normalize(con.frame().hands().get(0).palmPosition().getY()) - minVolHeight) / (DH / 1.0) * (LENGTH / 1.0), BarY);
 			}
 

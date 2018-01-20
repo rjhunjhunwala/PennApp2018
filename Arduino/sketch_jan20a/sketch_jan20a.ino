@@ -17,7 +17,9 @@ void loop() {
   countChains(1);
   // turn the LED on (HIGH is the voltage level)
   delay(60000/bpm/2);                       // wait for a second
-  digitalWrite(led13, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led13, LOW);                 // turn the LED off by making the voltage LOW
+  digitalWrite(led12, LOW);
+  digitalWrite(led11, LOW);
   delay(60000/bpm/2);      
 
 }
@@ -34,6 +36,6 @@ void countChains(int i){
 }
 
 int parseRange(int freq){
-  return 2;
+  return 3;
 }
 

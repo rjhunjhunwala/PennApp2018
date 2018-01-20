@@ -2,9 +2,8 @@ import serial
 ser = serial.Serial("COM4")
 #ser.close()
 try:
-    #while(True):
-        #print(ser.read())
-    ser.write('aaaaaaaaaa'.encode('utf-8'))
+    while(True):
+        time.sleep(.2)
+        ser.write(bytearray([50]))
 except:
     ser.close()
-ser.close()

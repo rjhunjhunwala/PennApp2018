@@ -4,18 +4,26 @@ package leap;
 import java.io.IOException;
 import java.lang.Math;
 import com.leapmotion.leap.*;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -148,11 +156,50 @@ public class Leap {
 }
 return 120;	
 }
+		public static int sum(Color c){
+			return c.getGreen()+c.getRed()+c.getBlue();
+		}
+		public static String findSongName(){
+		int xEnd = xBoxEndMax;
+		String song = "Should I stay or should I go now?";
+			for(;;){
+				if(sum(r.getPixelColor(xEnd,yBoxSearch))>400){
+					break;
+				}
+				xEnd--;
+			}
+			xEnd -=22;
+			Rectangle rect = new Rectangle(0,yBoxSearch-15,xEnd,30);
+			int newH, newW;
+			BufferedImage b = r.createScreenCapture(rect);
+			java.awt.Image img = b.getScaledInstance(newW=b.getWidth()*3,newH=b.getHeight()*3,BufferedImage.TYPE_INT_ARGB);
+			b = new BufferedImage(newW, newH,BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D g = b.createGraphics();
+			g.drawImage(img,0,0,null);
+			g.dispose();
 	
+			try{
+				
+			ImageIO.write(b,"png",new File("temp"));
+			//Runtime.getRuntime().exec(new String[]{"cmd.exe", "ocr.bat"});
+//Process p = Runtime.getRuntime().exec("tesseract temp out");
+			//while(true)System.out.println((char)p.getInputStream().read());
+  Runtime.
+   getRuntime().
+   exec("cmd /c start \"\" ocr.bat");
+	
+			}catch(Exception ex){}
+		return song;
+		}
+public static final int xBoxEndMax = 280;
+public static final int yBoxSearch = 682;
+
 	public static void main(String[] args) throws Exception {
 
-	
+	Thread.sleep(5000);
 
+	System.out.println(findSongName());
 		createWaitingThread();
 		double pastX = 0;
 

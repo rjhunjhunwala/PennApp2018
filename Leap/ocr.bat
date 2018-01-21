@@ -1,0 +1,2 @@
+tesseract temp out
+exit

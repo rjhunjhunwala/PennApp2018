@@ -13,13 +13,19 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 public class Leap {
 
+	static AtomicReference<Integer> tempo = new AtomicReference<Integer>(117);
+	
 	public static final int SKIP_Y = 678;
 	public static final int SKIP_BACK_X = 629;
 	public static final int SKIP_FORWARD_X = 735;
@@ -201,7 +207,20 @@ public class Leap {
 	public static final int yBoxSearch = 682;
 
 	public static void main(String[] args) throws Exception {
-
+new Thread(new Runnable(){
+	public void run(){
+		try {
+			Process p = Runtime.getRuntime().exec("cmd /c python cereal.py");
+		  while(true){
+				String E = tempo.get()+"";
+			 E +="\n";
+				p.getOutputStream().write(E.getBytes());
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(Leap.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+}).start();
 		createWaitingThread();
 		double pastX = 0;
 
@@ -239,14 +258,19 @@ public class Leap {
 							click(SpeakX, SpeakY);
 							Thread.sleep(1000);
 						}
+						new Thread(new Runnable(){
+							public void run(){
 String song =  findSongName();
-int tempo = getTempo(song);
-System.out.println(song+"|"+tempo+" bpm");
-					}
+int tem = getTempo(song);
+System.out.println(song+"|"+tem);
+tempo.set(tem);
+						}
+					}).start();
+							
+				}
 				}
 				lastFrame = con.frame();
 				pastX = newX;
-
 				if (!con.frame().hands().isEmpty() && (mapZero > minVolHeight || con.frame().hands().get(0).fingers().extended().count() != 0)) {
 					click(BarXStart + (normalize(con.frame().hands().get(0).palmPosition().getY()) - minVolHeight) / (DH / 1.0) * (LENGTH / 1.0), BarY);
 				}

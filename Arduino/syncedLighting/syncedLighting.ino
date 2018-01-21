@@ -5,6 +5,7 @@ int bpm = 120;
 int top = 1300;
 int bottom = 1074;
 int width = top - bottom;
+int num = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -24,10 +25,10 @@ void loop() {
   }
   
       digitalWrite(13, HIGH);
-      if (parseRange(1050)> 1){
+      if (num > 0){
         digitalWrite(led12, HIGH);
       }
-      if (parseRange(1050) > 2){
+      if (num > 1){
         digitalWrite(led11,HIGH);
       }
       delay(60000/2/bpm);
@@ -36,23 +37,8 @@ void loop() {
       digitalWrite(11,LOW);
       delay(60000/2/bpm);
     }
-  
 
 
-
-void countChains(int i){
-  int chains = parseRange(i);
-  digitalWrite(led13, HIGH);
-  if (chains > 1){
-    digitalWrite(led12, HIGH);
-  }
-  if (chains > 2){
-    digitalWrite(led11, HIGH);
-  }
-}
-
- int parseRange(int freq){
- return floor((freq-bottom)/(width/1.0)*3.0);
-}
+ 
 
 
